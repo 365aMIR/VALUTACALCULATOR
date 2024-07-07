@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "@fontsource/poppins"; /* Defaults to weight 400 */
+
+:root{
+    --mainpurple: #6101fa;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    /* background-color: var(--mainpurple);  fallback */
+    /* background-image: linear-gradient(to bottom, var(--mainpurple)50%, white); */
+    /* bg-gradient-to-b from-mainpurple from-10% to-purple-300 */
+}
