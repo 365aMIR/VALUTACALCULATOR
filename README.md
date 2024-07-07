@@ -1,3 +1,6 @@
+npm install @remix-run/react
+npm install mysql2 bcryptjs @remix-run/node
+
 # Welcome to Remix!
 
 - 📖 [Remix docs](https://remix.run/docs)
