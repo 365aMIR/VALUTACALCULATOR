@@ -8,11 +8,10 @@ const fetchCurrencyData = (path: string) =>
   new Promise<any>((resolve, reject) => {
     https.get(
       {
-        hostname: 'currency-exchange.p.rapidapi.com',
+        hostname: 'v6.exchangerate-api.com',
         path,
         headers: {
-          'x-rapidapi-key': '09f9741e04mshacfa545e3bc86dfp121e52jsn93b63e419c3e',
-          'x-rapidapi-host': 'currency-exchange.p.rapidapi.com',
+          'Authorization': '7aee62eb9bb3e8712a67f38f',
         },
       },
       res => {
@@ -24,7 +23,8 @@ const fetchCurrencyData = (path: string) =>
   });
 
 export const loader: LoaderFunction = async () => {
-  return await fetchCurrencyData('/listquotes');
+  const response = await fetchCurrencyData('/v6/7aee62eb9bb3e8712a67f38f/latest/USD');
+  return Object.keys(response.conversion_rates);
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -33,10 +33,11 @@ export const action: ActionFunction = async ({ request }) => {
   const fromCurrency = formData.get("fromCurrency") as string;
   const toCurrency = formData.get("toCurrency") as string;
 
-  const conversionRate = await fetchCurrencyData(`/exchange?q=1.0&from=${fromCurrency}&to=${toCurrency}`);
-  const convertedAmount = amount * parseFloat(conversionRate);
+  const conversionRateData = await fetchCurrencyData(`/v6/7aee62eb9bb3e8712a67f38f/pair/${fromCurrency}/${toCurrency}`);
+  const conversionRate = conversionRateData.conversion_rate;
+  const convertedAmount = amount * conversionRate;
 
-  return { amount, fromCurrency, toCurrency, conversionRate: parseFloat(conversionRate), convertedAmount };
+  return { amount, fromCurrency, toCurrency, conversionRate, convertedAmount };
 };
 
 export default function Exchange() {
@@ -97,12 +98,11 @@ export default function Exchange() {
 
         </Form>
         {conversionResult && (
-  <div className="mt-10 text-white flex flex-col items-start">
-    <p>{conversionResult.amount} {conversionResult.fromCurrency} = <span className="text-2xl">{conversionResult.convertedAmount} {conversionResult.toCurrency}</span></p>
-    <p className="text-sm mt-2">1 {conversionResult.fromCurrency} = {conversionResult.conversionRate} {conversionResult.toCurrency}</p>
-  </div>
-)}
-
+          <div className="mt-10 text-white flex flex-col items-start">
+            <p>{conversionResult.amount} {conversionResult.fromCurrency} = <span className="text-2xl">{conversionResult.convertedAmount} {conversionResult.toCurrency}</span></p>
+            <p className="text-sm mt-2">1 {conversionResult.fromCurrency} = {conversionResult.conversionRate} {conversionResult.toCurrency}</p>
+          </div>
+        )}
       </div>
     </div>
   );
